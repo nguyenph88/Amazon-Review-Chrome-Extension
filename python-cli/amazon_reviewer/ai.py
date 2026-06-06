@@ -28,7 +28,7 @@ def generate_review(cfg: AIConfig, title: str, rating: int, keyword: str | None 
     """Generate a review and return cleaned plain text."""
     if not cfg.api_key:
         raise RuntimeError(
-            f"No API key for provider '{cfg.provider}'. Set it in python/.env "
+            f"No API key for provider '{cfg.provider}'. Set it in python-cli/.env "
             f"({'GEMINI_API_KEY' if cfg.provider == 'gemini' else 'DEEPSEEK_API_KEY'})."
         )
 

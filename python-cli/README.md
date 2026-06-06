@@ -21,7 +21,7 @@ purchases** flow with [Playwright](https://playwright.dev/python/):
 ## Setup
 
 ```powershell
-cd python
+cd python-cli
 python -m pip install -r requirements.txt
 python -m playwright install chromium   # if the browser isn't already present
 
@@ -140,7 +140,7 @@ the tool saves debug screenshots (`listing-debug.png`, `dry-run-filled.png`,
 ## Layout
 
 ```
-python/
+python-cli/
   main.py                     entry point
   config.example.yaml         template config
   .env.example                template secrets

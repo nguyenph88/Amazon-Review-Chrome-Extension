@@ -62,7 +62,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 def load_config(config_path: str | os.PathLike | None = None) -> Config:
     """Load config.yaml (falling back to config.example.yaml) + .env keys."""
-    here = Path(__file__).resolve().parent.parent  # the python/ directory
+    here = Path(__file__).resolve().parent.parent  # the python-cli/ directory
 
     if load_dotenv is not None:
         load_dotenv(here / ".env")
