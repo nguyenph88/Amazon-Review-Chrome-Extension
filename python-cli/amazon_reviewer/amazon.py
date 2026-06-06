@@ -74,6 +74,18 @@ class AmazonFlow:
         url = self.page.url
         if "ap/signin" in url or "/ap/" in url:
             return False
+        # Positive signal first: the account nav greets a logged-in user by
+        # name ("Hello, Peter"), but says "Hello, sign in" when logged out.
+        try:
+            nav = self.page.locator("#nav-link-accountList").first
+            if nav.count() > 0:
+                text = (nav.inner_text(timeout=2000) or "").strip().lower()
+                if "sign in" in text:
+                    return False
+                if text.startswith("hello"):
+                    return True
+        except Exception:
+            pass
         for css in self.sel["signin_markers"]:
             if self.page.locator(css).count() > 0:
                 return False
@@ -88,9 +100,18 @@ class AmazonFlow:
         print("Complete the Amazon login in the browser window...")
         deadline = time.time() + timeout_s
         while time.time() < deadline:
-            if self.is_logged_in() and "signin" not in self.page.url:
-                return True
             time.sleep(2)
+            try:
+                url = self.page.url
+                if "signin" in url or "/ap/" in url:
+                    continue  # still in the auth flow (password, OTP, ...)
+                # Off the auth pages — confirm by reloading the listing and
+                # checking Amazon doesn't bounce us back to sign-in.
+                self.goto_listing()
+                if self.is_logged_in():
+                    return True
+            except Exception:
+                continue  # page mid-navigation; check again next tick
         return self.is_logged_in()
 
     # -- listing -----------------------------------------------------------
