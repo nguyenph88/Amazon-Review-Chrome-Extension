@@ -1,0 +1,38 @@
+# AI Review Assistant — CLI configuration
+# Copy to config.yaml and adjust. API keys live in .env (not here).
+
+ai:
+  # provider: deepseek | gemini
+  provider: deepseek
+  # model id for the chosen provider
+  #   deepseek: deepseek-v4-flash | deepseek-chat | deepseek-reasoner
+  #   gemini:   gemini-flash-lite-latest | gemini-2.5-flash | gemini-2.5-pro
+  model: deepseek-v4-flash
+  word_count: 200        # target review length (words)
+  temperature: 0.8
+  # Optional system persona used to nudge the model toward authentic prose.
+  system_prompt: >-
+    You are a real Amazon shopper writing a short, honest, natural-sounding
+    product review. Vary sentence length. Never use markdown, asterisks, or emoji.
+
+browser:
+  headless: false             # run with a visible window (recommended for first login)
+  # Where the logged-in Chrome profile / cookies are stored so you only log in once.
+  session_dir: .session
+  # slow_mo milliseconds between actions (helpful when watching / debugging)
+  slow_mo: 0
+  # locale + timezone help the session look consistent
+  locale: en-US
+  timezone: America/New_York
+
+amazon:
+  base_url: https://www.amazon.com
+  review_listing_url: https://www.amazon.com/review/review-your-purchases/
+  # Save captured network traffic (XHR/fetch/graphql) to this jsonl file when --capture is on.
+  capture_file: network-capture.jsonl
+  # How many product images to attach to a review (0 = none).
+  max_images: 1
+
+# Selectors are overridable here because Amazon changes its DOM frequently.
+# Leave empty to use the built-in defaults in amazon_reviewer/selectors.py.
+selectors: {}
