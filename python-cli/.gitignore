@@ -1,0 +1,8 @@
+.env
+config.yaml
+.session/
+network-capture.jsonl
+*.png
+__pycache__/
+*.pyc
+.tmp_images/
