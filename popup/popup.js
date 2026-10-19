@@ -1966,6 +1966,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Homelab-Backend "don't write like AI" service: offline rewrite strips AI tells and
+    // cannot invent facts. Unpublishable rewrite or service down -> keep the raw draft.
+    async function dwlaiClean(text) {
+      try {
+        const res = await fetch('http://10.0.0.119/dwlai/rewrite', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${(typeof DWLAI_TOKEN === 'undefined' ? '' : DWLAI_TOKEN).trim()}`
+          },
+          body: JSON.stringify({ text, mode: 'offline' }),
+          signal: AbortSignal.timeout(15000)
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()).data || {};
+        console.log(`dwlai ${data.before} -> ${data.after}`);
+        return data.publishable && data.text ? data.text : text;
+      } catch (e) {
+        console.warn('dwlai unavailable, keeping raw draft:', e);
+        return text;
+      }
+    }
+
     // Handle DeepSeek generation
     async function handleDeepSeekGeneration() {
       try {
@@ -2025,7 +2048,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const data = await response.json();
-        const generatedText = data.choices[0].message.content.replace(/\*\*/g, '');
+        const generatedText = await dwlaiClean(data.choices[0].message.content.replace(/\*\*/g, ''));
         
         const reviewTextarea = document.getElementById('review-textarea');
         if (reviewTextarea) {
@@ -2115,7 +2138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const data = await response.json();
-        const generatedText = data.candidates[0].content.parts[0].text;
+        const generatedText = await dwlaiClean(data.candidates[0].content.parts[0].text);
         
         // Put the result in the textarea
         const reviewTextarea = document.getElementById('review-textarea');

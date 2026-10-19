@@ -13,7 +13,8 @@
   "host_permissions": [
     "https://www.amazon.com/*",
     "https://api.deepseek.com/*",
-    "https://gemini.google.com/*"
+    "https://gemini.google.com/*",
+    "http://10.0.0.119/*"
   ],
   "background": {
     "service_worker": "background.js"
